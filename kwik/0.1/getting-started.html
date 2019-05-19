@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting started :: Kwik</title>
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">Kwik</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/jcornaz/kwik">Repository</a>
+        <a class="navbar-item" href="https://github.com/jcornaz/kwik/issues">Issues</a>
+
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="https://bintray.com/kwik/preview/kwik/">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="main-wrapper">
+<div class="navigation-container" data-component="kwik" data-version="0.1">
+  <aside class="navigation">
+    <div class="panels">
+<div class="navigation-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">kwik</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="getting-started.html">Getting started</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="navigation-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">kwik</span>
+    <span class="version">0.1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">kwik</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">0.1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+  <main class="main">
+<div class="toolbar" role="navigation">
+  <button class="navigation-toggle"></button>
+<nav class="crumbs" aria-label="breadcrumbs">
+  <ul>
+    <li class="crumb"><a href="index.html">kwik</a></li>
+    <li class="crumb"><a href="getting-started.html">Getting started</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/jcornaz/kwik/edit/master/docs/modules/ROOT/pages/getting-started.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+<h1>Getting started</h1>
+<div class="sect1">
+<h2 id="_setup"><a class="anchor" href="#_setup"></a>Setup</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add <a href="https://dl.bintray.com/kwik/preview" class="bare">https://dl.bintray.com/kwik/preview</a> to your maven repositories</p>
+</li>
+<li>
+<p>Add <code>com.github.jcornaz.kwik:kwik-core-jvm:&lt;version&gt;</code> as a dependency<br>
+(replacing <code>jvm</code> by <code>common</code> in case of a common module, and replacing <code>&lt;version&gt;</code> by the version you want to use)</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Example with Gradle (Kotlin DSL)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">repositories {
+    maven { url = uri("https://dl.bintray.com/kwik/preview") }
+}
+
+dependencies {
+
+    // in a JVM module
+    testCompile("com.github.jcornaz.kwik:kwik-core-jvm:&lt;version&gt;")
+
+    // in a common (multiplatform) module
+    testCompile("com.github.jcornaz.kwik:kwik-core-common:&lt;version&gt;")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_write_a_test"><a class="anchor" href="#_write_a_test"></a>Write a test</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Example with Junit or equivalent</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class PlusOperatorTest {
+
+    // Default config and generators
+    @Test
+    fun isCommutative() = forAll { x: Int, y: Int -&gt;
+        x + y == y + x
+    }
+
+    // With a given number of iterations
+    @Test
+    fun isAssociative() = forAll(iterations = 1000) { x: Int, y: Int, z: Int -&gt;
+        (x + y) + z == x + (y + z)
+    }
+
+    // Use a seed to get reproducible results (useful when investigating a failure in the CI for instance)
+    @Test
+    fun zeroIsNeutral() = forAll(seed = -4567) { x: Int -&gt;
+        x + 0 == x
+    }
+
+    // Configure or use a custom generator
+    @Test
+    fun addNegativeSubtracts() = forAll(Generator.ints(min = 0), Generator.ints(max = -1)) { x, y -&gt;
+        x + y &lt; x
+    }
+
+    // Create a custom generator
+    val customGenerator1 = Generator.create { rng -&gt; CustomClass(rng.nextInt(), rng.nextInt()) }
+
+    // Combine generators
+    val customGenerator2 = Generator.ints().zip(Generator.ints()) { x, y -&gt; CustomClass(x, y) }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script src="../../_/js/vendor/highlight.js"></script>
+<script>hljs.initHighlighting()</script>
+  </body>
+</html>
